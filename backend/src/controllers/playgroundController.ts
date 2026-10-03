@@ -30,19 +30,21 @@ export const getPlaygroundById = async (req: Request, res: Response) => {
 
 export const createPlayground = async (req: Request, res: Response) => {
   try {
-    const { title, data, thumbnail, tags } = req.body;
+    const { title, description, gameData, thumbnail, tags, genre } = req.body;
     const userId = (req as any).userId;
 
-    if (!title || !data) {
-      return res.status(400).json({ message: 'Title and data are required' });
+    if (!title || !description || !gameData) {
+      return res.status(400).json({ message: 'Title, description, and gameData are required' });
     }
 
     const playground = new Playground({
       title,
+      description,
       author: userId,
-      data,
+      gameData,
       thumbnail,
-      tags: tags || []
+      tags: tags || [],
+      genre: genre || 'arcade'
     });
 
     await playground.save();
@@ -59,7 +61,7 @@ export const createPlayground = async (req: Request, res: Response) => {
 
 export const updatePlayground = async (req: Request, res: Response) => {
   try {
-    const { title, data, thumbnail, tags } = req.body;
+    const { title, description, gameData, thumbnail, tags, genre } = req.body;
     const userId = (req as any).userId;
 
     const playground = await Playground.findById(req.params.id);
@@ -73,9 +75,11 @@ export const updatePlayground = async (req: Request, res: Response) => {
     }
 
     if (title) playground.title = title;
-    if (data) playground.data = data;
+    if (description) playground.description = description;
+    if (gameData) playground.gameData = gameData;
     if (thumbnail !== undefined) playground.thumbnail = thumbnail;
     if (tags) playground.tags = tags;
+    if (genre) playground.genre = genre;
 
     await playground.save();
     await playground.populate('author', 'username email');
