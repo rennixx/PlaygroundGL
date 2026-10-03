@@ -34,3 +34,10 @@ backend/.env
 *.njsproj
 *.sln
 *.sw?
+
+# Local-only and generated files
+.claude/settings.local.json
+.env.*
+!.env.example
+nul
+src/index-backup.css
